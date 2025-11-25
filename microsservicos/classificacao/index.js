@@ -16,6 +16,17 @@ const funcoes = {
       type: 'ObservacaoClassificada',
       payload: observacao
     })
+  },
+
+  LembreteCriado: (lembrete) => {
+    if(lembrete.texto.includes(palavraChave))
+      lembrete.status = 'importante'
+    else
+      lembrete.status = 'comum'
+    axios.post('http://localhost:10000/eventos', {
+      type: 'LembreteClassificado',
+      payload: lembrete
+    })
   }
 }
 

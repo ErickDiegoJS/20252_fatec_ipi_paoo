@@ -17,13 +17,25 @@ app.use(express.json())
 */
 let id = 0
 const lembretes = {}
+const funcoes = {
+  LembreteClassificado: (lembrete) => {
+    //eu faço esse: atualizar a base local
+    lembretes[lembrete.id] = lembrete
+    //emitir um evento de tipo ObservacaoAtualizada e cujo payload seja a propria observacao
+    axios.post('http://localhost:10000/eventos', {
+      type: 'LembreteAtualizado',
+      payload: lembrete
+    })
+  }
+
+}
 //definindo um endpoint que permite que lembretes sejam cadastrados
 //POST /lembretes (req, res) => {}
 app.post('/lembretes', async function(req, res){
   id++
   const texto = req.body.texto
   // const lembrete = { id: id, texto: texto}
-  const lembrete = { id, texto }
+  const lembrete = { id, texto, status: 'aguardando' }
   lembretes[id] = lembrete
   await axios.post('http://localhost:10000/eventos', {
     type: 'LembreteCriado',
@@ -39,8 +51,13 @@ app.get('/lembretes', (req, res) => {
 })
 
 app.post('/eventos', (req, res) => {
-  const evento = req.body
-  console.log(evento)
+  try{
+    const evento = req.body
+    console.log(evento)
+    funcoes[evento.type](evento.payload)
+  }
+  catch(e){
+  }
   res.end()
 })
 
