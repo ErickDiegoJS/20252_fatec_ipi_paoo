@@ -6,12 +6,14 @@ import axios from 'axios'
 const app = express()
 app.use(express.json())
 
-const eventos = []
+const eventos = {}
 
 //POST /eventos
 app.post('/eventos', async (req, res) => {
   const evento = req.body
-  eventos.push(evento)
+
+  eventos[evento.type] = (eventos[evento.type] || []).push(evento)
+
   console.log(evento)
   try{
     await axios.post('http://localhost:4000/eventos', evento)
