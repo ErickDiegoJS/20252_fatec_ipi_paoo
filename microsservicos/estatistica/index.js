@@ -1,4 +1,4 @@
-import express from 'express'
+const express = require('express')
 const { v4: uuidv4 } = require('uuid');
 const app = express()
 const axios = require('axios')
@@ -7,7 +7,6 @@ app.use(express.json())
 const estatistica = {}
 
 app.get('/estatistica', (req, res) => {
-	//devolver a base consolidada como um json
 	res.json(logs)
 })
 
@@ -43,8 +42,13 @@ app.post('/eventos', async (req, res) => {
 })
 
 const port = 9000
-app.listen(port, () => {
+app.listen(port, async () => {
 	console.log(`Estatística. Porta ${port}.`)
+
+	await axios.post('http://localhost:10000/registrar', {
+		nome: "estatistica",
+		interesses: ['*'],
+		porta: port
+	})
+  	console.log(`Interesses registrados no barramento.`)
 })
-
-

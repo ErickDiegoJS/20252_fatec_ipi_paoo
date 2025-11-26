@@ -1,4 +1,5 @@
-import express from 'express'
+const express = require('express')
+const axios = require('axios')
 const { v4: uuidv4 } = require('uuid');
 const app = express()
 app.use(express.json())
@@ -6,13 +7,11 @@ app.use(express.json())
 const logs = []
 
 app.get('/logs', (req, res) => {
-	//devolver a base consolidada como um json
 	res.json(logs)
 })
 
 app.post('/eventos', (req, res) => {
 	try {
-		//pegar o evento do corpo da requisição e fazer esse ponteiro apontar para ele
 		const evento = req.body
 		console.log(evento)
 
@@ -30,8 +29,13 @@ app.post('/eventos', (req, res) => {
 })
 
 const port = 8000
-app.listen(port, () => {
+app.listen(port, async () => {
 	console.log(`Logs. Porta ${port}.`)
+
+	await axios.post('http://localhost:10000/registrar', {
+		nome: "logs",
+		interesses: ['*'],
+		porta: port
+	})
+  	console.log(`Interesses registrados no barramento.`)
 })
-
-
